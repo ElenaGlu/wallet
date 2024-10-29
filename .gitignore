@@ -1,0 +1,6 @@
+/wallet/db/
+/wallet/.env
+**/__pycache__/
+.idea/
+*.exe
+.pytest_cache/
