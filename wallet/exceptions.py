@@ -16,3 +16,8 @@ class ErrorType:
         'status_code': 400,
         'summary': 'Bad Request',
     }
+
+    SCHEMA_ERROR = {
+        'status_code': 400,
+        'summary': 'Bad Request',
+    }

@@ -1,17 +1,32 @@
+import uuid
 from typing import Dict, Union, Any
 
 from django.db.models import F
 
-from app.models import Wallet
+from app.models import Transaction, Wallet
 from exceptions import ErrorType, AppError
+
+schemas = {
+    'update_wallet': {
+            'type': 'object',
+            'required': ['operationType', 'amount'],
+            'properties': {
+                'operationType': {
+                    'type': 'string',
+                },
+                'amount': {
+                    'type': 'number',
+                },
+            },
+        },
+}
 
 
 class WalletHandler:
 
-    def __init__(self, uuid: str, data_wallet: Dict[str, Union[str, int]]):
-        self.uuid = uuid
-        self.operationType = data_wallet['operationType']
-        self.amount = data_wallet['amount']
+    def __init__(self, wallet_id: str, data_wallet: Dict[str, Union[str, int]] = None):
+        self.wallet_id = wallet_id
+        self.data_wallet = data_wallet
 
     def check_wallet(self) -> None:
         """
@@ -19,13 +34,13 @@ class WalletHandler:
         :return: None
         :raises AppError: if UUID invalid
         """
-        uuid_wallet = Wallet.objects.filter(pk=self.uuid).first()
+        uuid_wallet = Wallet.objects.filter(pk=self.wallet_id).first()
         mapper = {
             'deposit': self.deposit,
             'withdraw': self.withdraw
         }
         if uuid_wallet:
-            mapper[self.operationType](self.amount)
+            mapper[self.data_wallet['operationType']](self.wallet_id, self.data_wallet)
         else:
             raise AppError(
                 {
@@ -34,15 +49,23 @@ class WalletHandler:
                 }
             )
 
-    def deposit(self, new_amount: int) -> None:
+    def deposit(self, wallet_id: str, data_wallet: Dict[str, Union[str, int]]) -> None:
         """
         Increase the wallet balance.
-        :param new_amount: example, 1000
+        :param data_wallet: dict with key- 'operationType', 'amount'
+        :param wallet_id: example, 'a8098c1a-f86e-11da-bd1a-00112444be1e'
         :return: None
         :raises AppError: if the deposit amount is negative
         """
-        if new_amount > 0:
-            Wallet.objects.filter(pk=self.uuid).update(amount=F('amount') + new_amount)
+        if data_wallet['amount'] > 0:
+            data = {
+                'id': str(uuid.uuid4()),
+                'wallet_id': self.wallet_id,
+                'operation': data_wallet['operationType'],
+                'amount': data_wallet['amount']
+            }
+            Transaction.objects.create(**data)
+            Wallet.objects.filter(pk=self.wallet_id).update(account_balance=F('account_balance') + data_wallet['amount'])
         else:
             raise AppError(
                 {
@@ -51,16 +74,24 @@ class WalletHandler:
                 }
             )
 
-    def withdraw(self, new_amount: int) -> None:
+    def withdraw(self, wallet_id: str, data_wallet: Dict[str, Union[str, int]]) -> None:
         """
         Reduce the wallet balance.
-        :param new_amount: example, 1000
+        :param data_wallet:  dict with key- 'operationType', 'amount'
+        :param wallet_id: example, 'a8098c1a-f86e-11da-bd1a-00112444be1e'
         :return: None
         :raises AppError: if the withdrawal amount is negative
         """
-        available_amount = list(Wallet.objects.filter(pk=self.uuid).values('amount'))[0]['amount']
-        if new_amount > 0 and available_amount - new_amount >= 0:
-            Wallet.objects.filter(pk=self.uuid).update(amount=F('amount') - new_amount)
+        available_amount = list(Wallet.objects.filter(pk=self.wallet_id).values('account_balance'))[0]['account_balance']
+        if data_wallet['amount'] > 0 and available_amount - data_wallet['amount'] >= 0:
+            data = {
+                'id': str(uuid.uuid4()),
+                'wallet_id': self.wallet_id,
+                'operation': data_wallet['operationType'],
+                'amount': data_wallet['amount']
+            }
+            Transaction.objects.create(**data)
+            Wallet.objects.filter(pk=self.wallet_id).update(account_balance=F('account_balance') - data_wallet['amount'])
         else:
             raise AppError(
                 {
@@ -76,9 +107,9 @@ class WalletHandler:
         :raises AppError: if UUID invalid
         """
 
-        uuid_wallet = list(Wallet.objects.filter(pk=self.uuid).first().values())
-        if uuid_wallet:
-            return uuid_wallet
+        account_balance = list(Wallet.objects.filter(pk=self.wallet_id).values('account_balance'))
+        if account_balance:
+            return account_balance
         else:
             raise AppError(
                 {

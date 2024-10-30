@@ -5,6 +5,6 @@ from app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/v1/wallets/<str:uuid>/operation/', views.update_wallet, name='update_wallet'),
-    path('api/v1/wallets/<str:uuid>', views.get_wallet, name='get_wallet'),
+    path('api/v1/wallets/<uuid:wallet_id>/operation/', views.update_wallet, name='update_wallet'),
+    path('api/v1/wallets/<uuid:wallet_id>/', views.get_wallet, name='get_wallet'),
 ]
