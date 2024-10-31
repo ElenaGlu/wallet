@@ -40,7 +40,7 @@ class WalletHandler:
             'withdraw': self.withdraw
         }
         if uuid_wallet:
-            mapper[self.data_wallet['operationType']](self.wallet_id, self.data_wallet)
+            mapper[self.data_wallet['operationType']]()
         else:
             raise AppError(
                 {
@@ -49,23 +49,21 @@ class WalletHandler:
                 }
             )
 
-    def deposit(self, wallet_id: str, data_wallet: Dict[str, Union[str, int]]) -> None:
+    def deposit(self) -> None:
         """
         Increase the wallet balance.
-        :param data_wallet: dict with key- 'operationType', 'amount'
-        :param wallet_id: example, 'a8098c1a-f86e-11da-bd1a-00112444be1e'
         :return: None
         :raises AppError: if the deposit amount is negative
         """
-        if data_wallet['amount'] > 0:
+        if self.data_wallet['amount'] > 0:
             data = {
                 'id': str(uuid.uuid4()),
                 'wallet_id': self.wallet_id,
-                'operation': data_wallet['operationType'],
-                'amount': data_wallet['amount']
+                'operation': self.data_wallet['operationType'],
+                'amount': self.data_wallet['amount']
             }
             Transaction.objects.create(**data)
-            Wallet.objects.filter(pk=self.wallet_id).update(account_balance=F('account_balance') + data_wallet['amount'])
+            Wallet.objects.filter(pk=self.wallet_id).update(account_balance=F('account_balance') + self.data_wallet['amount'])
         else:
             raise AppError(
                 {
@@ -74,29 +72,27 @@ class WalletHandler:
                 }
             )
 
-    def withdraw(self, wallet_id: str, data_wallet: Dict[str, Union[str, int]]) -> None:
+    def withdraw(self) -> None:
         """
         Reduce the wallet balance.
-        :param data_wallet:  dict with key- 'operationType', 'amount'
-        :param wallet_id: example, 'a8098c1a-f86e-11da-bd1a-00112444be1e'
         :return: None
         :raises AppError: if the withdrawal amount is negative
         """
         available_amount = list(Wallet.objects.filter(pk=self.wallet_id).values('account_balance'))[0]['account_balance']
-        if data_wallet['amount'] > 0 and available_amount - data_wallet['amount'] >= 0:
+        if self.data_wallet['amount'] > 0 and available_amount - self.data_wallet['amount'] >= 0:
             data = {
                 'id': str(uuid.uuid4()),
                 'wallet_id': self.wallet_id,
-                'operation': data_wallet['operationType'],
-                'amount': data_wallet['amount']
+                'operation': self.data_wallet['operationType'],
+                'amount': self.data_wallet['amount']
             }
             Transaction.objects.create(**data)
-            Wallet.objects.filter(pk=self.wallet_id).update(account_balance=F('account_balance') - data_wallet['amount'])
+            Wallet.objects.filter(pk=self.wallet_id).update(account_balance=F('account_balance') - self.data_wallet['amount'])
         else:
             raise AppError(
                 {
                     'error_type': ErrorType.AMOUNT_ERROR,
-                    'description': 'the withdraw amount cannot be negative'
+                    'description': 'the withdraw amount cannot be negative or there are not enough funds in the account'
                 }
             )
 
@@ -106,7 +102,6 @@ class WalletHandler:
         :return: example, 100
         :raises AppError: if UUID invalid
         """
-
         account_balance = list(Wallet.objects.filter(pk=self.wallet_id).values('account_balance'))
         if account_balance:
             return account_balance

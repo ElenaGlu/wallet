@@ -19,7 +19,7 @@ services:
     secrets:
       - db-password
     volumes:
-      - data:/var/lib/postgresql/data/
+      - postgres_data:/var/lib/postgresql/data/
     environment:
       - POSTGRES_DB=wallet
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
@@ -31,7 +31,7 @@ services:
       timeout: 5s
       retries: 5
 volumes:
-  data:
+  postgres_data:
 secrets:
   db-password:
     file: db/password.txt

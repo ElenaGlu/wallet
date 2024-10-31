@@ -8,9 +8,10 @@ from exceptions import ErrorType, AppError
 def update_wallet(request: HttpRequest, wallet_id: str) -> HttpResponse:
     """
     Update the wallet balance.
-    :param wallet_id: example, 'a8098c1a-f86e-11da-bd1a-00112444be1e'
     :param request: JSON object containing keys - 'operationType', 'amount'
+    :param wallet_id: example, 'a8098c1a-f86e-11da-bd1a-00112444be1e'
     :return: "created" (201) response code
+    :raises AppError: if json invalid
     """
     if request.method == "POST":
         schema = schemas['update_wallet']
@@ -20,7 +21,7 @@ def update_wallet(request: HttpRequest, wallet_id: str) -> HttpResponse:
             raise AppError(
                 {
                     'error_type': ErrorType.SCHEMA_ERROR,
-                    'description': f'Invalid JSON',
+                    'description': 'Invalid JSON',
                 }
             )
         obj = WalletHandler(wallet_id, json.loads(request.body))
@@ -33,6 +34,7 @@ def get_wallet(request: HttpRequest, wallet_id: str) -> JsonResponse:
     Get the wallet balance.
     :param wallet_id: example, 'a8098c1a-f86e-11da-bd1a-00112444be1e'
     :return: "OK" (200) response code
+    :raises AppError: if UUID invalid
     """
     if request.method == "GET":
         obj = WalletHandler(wallet_id)
