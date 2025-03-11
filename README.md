@@ -22,7 +22,7 @@ Python3, Django, PostgreSQL, Poetry, Docker Compose, Pytest
 Использован Pytest для написания интеграционных тестов и создания тестовой бд.
 
 ```
-Запустить тесты можно командой: pytest
+Запустить тесты можно командой: pytest из директории /service_receipt
 
  Структура проекта
 /tests                # Директория с тестами
