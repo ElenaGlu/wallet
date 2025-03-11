@@ -17,6 +17,18 @@ amount: 1000
 
 Python3, Django, PostgreSQL, Poetry, Docker Compose, Pytest
 
+### Тестирование:
+
+Использован Pytest для написания интеграционных тестов и создания тестовой бд.
+
+```
+Запустить тесты можно командой: pytest
+
+ Структура проекта
+/tests                # Директория с тестами
+    /api              # Тесты для API
+```
+
 ### Запуск проекта на локальной машине:
 
 - Клонировать репозиторий:
@@ -24,9 +36,6 @@ Python3, Django, PostgreSQL, Poetry, Docker Compose, Pytest
 https://github.com/ElenaGlu/wallet.git
 cd wallet
 ```
-
-### Запустите проект:
-
 ```
 sudo docker compose up --build
 ```
