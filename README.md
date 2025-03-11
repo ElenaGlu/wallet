@@ -35,10 +35,5 @@ Python3, Django, PostgreSQL, Poetry, Docker Compose, Pytest
 ```
 https://github.com/ElenaGlu/wallet.git
 cd wallet
-```
-
-### Запустите проект:
-
-```
 sudo docker compose up --build
 ```
