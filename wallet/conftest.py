@@ -3,7 +3,7 @@ import pytest
 from app import models
 
 
-@pytest.fixture()
+@pytest.fixture
 def add_wallet():
     wallet = [
         {
@@ -15,13 +15,11 @@ def add_wallet():
             "account_balance": 500,
         }
     ]
-    temporary = []
-    for obj in wallet:
-        temporary.append(models.Wallet(**obj))
-    return models.Wallet.objects.bulk_create(temporary)
+    temp = [models.Wallet(**obj) for obj in wallet]
+    return models.Wallet.objects.bulk_create(temp)
 
 
-@pytest.fixture()
+@pytest.fixture
 def add_transaction(add_wallet):
     transaction = [
         {
@@ -43,7 +41,5 @@ def add_transaction(add_wallet):
             "wallet_id": add_wallet[1].id
         },
     ]
-    temporary = []
-    for obj in transaction:
-        temporary.append(models.Transaction(**obj))
-    return models.Transaction.objects.bulk_create(temporary)
+    temp = [models.Transaction(**obj) for obj in transaction]
+    return models.Transaction.objects.bulk_create(temp)
