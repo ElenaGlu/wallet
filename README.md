@@ -24,10 +24,10 @@ Content-Type: application/json
 Python3, Django, PostgreSQL, Poetry, Docker Compose, Pytest
 
 Интеграционные тесты включают - положительные и негативные сценарии.
-Запуск тестов - команда pytest из директории /wallet
+- Запуск тестов - команда pytest из директории /wallet
 ```
 /app
-  /tests              # Директория с тестами
+  /tests          
       test_wallet_get.py 
       test_wallet_update.py
 ```
