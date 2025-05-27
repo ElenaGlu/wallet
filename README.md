@@ -5,12 +5,12 @@
 
 API принимает запрос вида:
 
-### POST `/api/v1/wallets/<WALLET_UUID>/operation`
+#### POST `/api/v1/wallets/<WALLET_UUID>/operation`
 
 Осуществляет операцию пополнения или снятия средств с кошелька.
 
-#### Пример запроса:
-```json
+Пример запроса:
+```
 POST /api/v1/wallets/<WALLET_UUID>/operation
 Content-Type: application/json
 
@@ -18,8 +18,8 @@ Content-Type: application/json
   "operationType": "DEPOSIT", // или "WITHDRAW"
   "amount": 1000
 }
-
-### GET `/api/v1/wallets/<WALLET_UUID>`
+```
+#### GET `/api/v1/wallets/<WALLET_UUID>`
 
 получает баланс кошелька
 
