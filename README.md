@@ -5,14 +5,22 @@
 
 API принимает запрос вида:
 
-- POST api/v1/wallets/<WALLET_UUID>/operation
-{
-operationType: DEPOSIT or WITHDRAW,
-amount: 1000
-}
-и выполняет логику по изменению счета в базе данных
+### POST `/api/v1/wallets/<WALLET_UUID>/operation`
 
-- GET api/v1/wallets/{WALLET_UUID}
+Осуществляет операцию пополнения или снятия средств с кошелька.
+
+#### Пример запроса:
+```json
+POST /api/v1/wallets/<WALLET_UUID>/operation
+Content-Type: application/json
+
+{
+  "operationType": "DEPOSIT", // или "WITHDRAW"
+  "amount": 1000
+}
+
+### GET `/api/v1/wallets/<WALLET_UUID>`
+
 получает баланс кошелька
 
 
