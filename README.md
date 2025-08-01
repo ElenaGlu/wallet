@@ -31,4 +31,9 @@ Python3, Django, PostgreSQL, Poetry, Docker Compose, Pytest
       test_wallet_get.py 
       test_wallet_update.py
 ```
-
+В рамках проекта было проведено тестирование, включающее следующие виды:
+* [x] Белый ящик
+* [x] Функциональное
+* [x] Интеграционное
+* [x] Автоматизированное
+* [x] Тестирование по документации
